@@ -31,4 +31,9 @@ defmodule Comics.UserTest do
   test "checking password validity with an invalid password", %{user: user} do
     assert User.valid_password?(user, "hackers!") == false
   end
+
+  test "applies an API token on creation", %{user: user} do
+    assert is_bitstring(user.api_token)
+    assert String.length(user.api_token) == 32
+  end
 end
