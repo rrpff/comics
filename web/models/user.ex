@@ -19,6 +19,11 @@ defmodule Comics.User do
   @required_fields ~w(username password)
   @optional_fields ~w()
 
+  @doc """
+  Checks validity of a password against a User.
+
+  If user is nil (i.e. hasn't been found) it performs a dummy check anyway.
+  """
   def valid_password?(user, password) do
     if user = Repo.get_by(User, username: user.username) do
       checkpw(password, user.hashed_password)
@@ -40,6 +45,9 @@ defmodule Comics.User do
     |> hash_password
   end
 
+  @doc """
+  Inserts an API token if one isn't present
+  """
   def generate_api_token(changeset) do
     if changeset.model.api_token == nil do
       token = :crypto.strong_rand_bytes(16) |> Base.encode16(case: :lower)
@@ -49,6 +57,9 @@ defmodule Comics.User do
     end
   end
 
+  @doc """
+  Hashes the password suitable for database storage
+  """
   def hash_password(changeset) do
     if Map.has_key?(changeset.changes, :password) do
       put_change(changeset, :hashed_password, hashpwsalt(changeset.changes.password))
